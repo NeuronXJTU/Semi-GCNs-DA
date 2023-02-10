@@ -1,5 +1,5 @@
 ﻿import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 import argparse
 import random
 import shutil
@@ -35,7 +35,7 @@ def parse_args():
     parser.add_argument('--device', type=str, default='cuda')
     parser.add_argument('--num_workers', type=int, default=16)
     # Train settings
-    parser.add_argument('--pre_epochs', type=int, default=1)
+    parser.add_argument('--pre_epochs', type=int, default=1,help='Source domain data was used to train the model')
     parser.add_argument('--epochs', type=int, default=100000)
     parser.add_argument('--batch_size', type=int, default=50)
     # Optimizer
@@ -43,13 +43,13 @@ def parse_args():
     parser.add_argument('--beta1', type=float, default=0.9)
     parser.add_argument('--beta2', type=float, default=0.999)
     parser.add_argument('--weight_decay', type=float, default=1e-6)
-    parser.add_argument('--begain_ent', type=int, default=1)
+    parser.add_argument('--begain_ent', type=int, default=1,help='Entropy optimization and pseudo labels was used to train the model')
     # Txts
-    parser.add_argument('--txt_dir', type=str, default=''/media/oem/sda21/zk/DATA/ultrasonic'')
-    parser.add_argument('--source_txt', type=str, default='./txt/0/source.txt')
-    parser.add_argument('--target_unlabeled_txt', type=str, default='./txt/0/targetUnlabel.txt')
-    parser.add_argument('--target_test_txt', type=str, default='./txt/0/targetTest.txt')
-    parser.add_argument('--target_labeled_txt', type=str, default='./txt/0/targetReal.txt')
+    parser.add_argument('--txt_dir', type=str, default=''./txt'',help='The path of txt file')
+    parser.add_argument('--source_txt', type=str, default='./txt/0/source.txt',help='The txt file of source data')
+    parser.add_argument('--target_unlabeled_txt', type=str, default='./txt/0/targetUnlabel.txt',help='The txt file of unlabelled target data')
+    parser.add_argument('--target_test_txt', type=str, default='./txt/0/targetTest.txt',help='The txt file of target test data')
+    parser.add_argument('--target_labeled_txt', type=str, default='./txt/0/targetReal.txt', help='The txt file of labelled target data')
     # Directory for output
     parser.add_argument('--out_dir', type=str, default='./')
     args = parser.parse_args()
