@@ -15,24 +15,16 @@ import pylab
 FLOAT_MAX = 1e100
 
 class Point:
-    '''
-    "x" and "y" are eigenvectors.
-    "group" is the number of cluster.
-    "name" is the corresponding image name.
-     "preLabel" is the value of the pseudo label.
-    '''
 	__slots__ = ["x", "y", "group","name","preLabel"]
 	def __init__(self, x = 0, y = 0, group = 0,name="1",preLabel=0):
 		self.x, self.y,self.name,self.preLabel, self.group = x, y, group,name,preLabel
 
 def generatePoints(pointsNumber, features,names,preLabels):
-    '''
-    The points were created.
-    '''
 	points = [Point() for _ in range(pointsNumber)]
 	count = 0
 	print(len(points))
 	for i,point in enumerate(points):
+		# print(str(i))
 		points[i].x=features[i][0]
 		points[i].y=features[i][1]
 		points[i].name=names[i]
@@ -161,6 +153,9 @@ def train(args):
     criterion_l1 = criterion_l1.cuda()
     criterion_cross1 = torch.nn.CrossEntropyLoss(reduce=False, ignore_index=2)
     criterion_cross1 = criterion_cross1.cuda()
+    criterion_l2 = nn.MSELoss(size_average=False)
+    criterion_l2 = criterion_l2.cuda()
+
 
     optimizer = torch.optim.Adam(
         params=list(model.parameters()),
@@ -204,7 +199,7 @@ def train(args):
             scheduler.step(lr_count_tun)
             if (lr_count_tun % 3 == 0):
                 print("test_acc")
-                if (lr_count_tun > 100):
+                if (lr_count_tun > 300):
                     break
                 print("lr_count_s")
                 print(lr_count_s)
@@ -216,19 +211,17 @@ def train(args):
             data_iter_t = iter(reallabel_loader)
             lr_count_t = lr_count_t + 1
         model.train()
-
-#         When lr_count_s < args.pre_epochs, source domain data was used to train the model
         if (lr_count_s < args.pre_epochs):
             (images_0, labels_0) = next(data_iter_s)
             images_0 = images_0.cuda()
             labels_0 = labels_0.cuda()
             outputS, _, _ = model(images_0)
             reg_l1 = 1e-5 * cal_reg_l1(model, criterion_l1)
-            lossS = criterion_cross(outputS[0], labels_0)
+            lossS = 0.5*criterion_cross(outputS[0], labels_0)
             optimizer.zero_grad()
             lossS.backward()
             optimizer.step()
-
+    # else:
         isFalseUp = isFalseUp + 1
         (images_1, labels_1) = next(data_iter_t)
         images_1 = images_1.cuda()
@@ -307,7 +300,7 @@ def train(args):
             pointsLabel1=np.argmax(locMager)
 
             if((pointsLabel0+pointsLabel1)==1):
-                
+
                 fNPreLabel={}
                 for i,point in enumerate(pointsCluster0):
                     fNPreLabel[point.name] = pointsLabel0
@@ -322,11 +315,11 @@ def train(args):
         GTun = F.softmax(GTun)
         loss_ent = -0.1 * torch.mean(torch.sum(GTun *
                                                (torch.log(GTun + 1e-5)), 1))
-        reg_l1 = 1e-5 * cal_reg_l1(model, criterion_l1)
+        reg_l2 = cal_reg_l1(model, criterion_l2)
         if(lr_count_s<args.begain_ent):
             loss_ent=0
             loss_unPresuo=0
-        loss_tun =loss_ent+lossT+loss_unPresuo
+        loss_tun =0.5*loss_ent+lossT+loss_unPresuo+0.7*reg_l2
         # loss_tun =loss_ent+ lossT+loss_unPresuo
         optimizer.zero_grad()
         loss_tun.backward()
