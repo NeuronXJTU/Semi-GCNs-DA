@@ -30,5 +30,3 @@ A training job can be launched using:
 python main.py
 ```
 
-There are some adjustable parameters. Parameter with name pre_epochs means the number of rounds that the source domain data participates in training. Parameter with name begain_ent means the number of rounds of entropy optimization and pseudo label. When conducting the experiment on the first and second groups of data, it is recommended that the value of pre_epochs be 1, and the value of begain_ent be 1. When experimenting on the other four sets of data, it is recommended that the value of pre_epochs be 5, and the value of begain_ent be 5. 
-
