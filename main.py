@@ -14,8 +14,7 @@ def main(args):
     '''
     Main
     '''
-    # This is not recommended:
-    
+
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
     torch.cuda.manual_seed(args.seed)
@@ -33,23 +32,25 @@ def parse_args():
     # Basic settings
     parser.add_argument('--seed', type=int, default=233)
     parser.add_argument('--device', type=str, default='cuda')
-    parser.add_argument('--num_workers', type=int, default=16)
+    parser.add_argument('--num_workers', type=int, default=0)
     # Train settings
-    parser.add_argument('--pre_epochs', type=int, default=1,help='Source domain data was used to train the model')
     parser.add_argument('--epochs', type=int, default=100000)
-    parser.add_argument('--batch_size', type=int, default=50)
+    parser.add_argument('--batch_size', type=int, default=100)
+    parser.add_argument('--end_epochs', type=int, default=100)
     # Optimizer
     parser.add_argument('--lr', type=float, default=1e-4)
     parser.add_argument('--beta1', type=float, default=0.9)
     parser.add_argument('--beta2', type=float, default=0.999)
     parser.add_argument('--weight_decay', type=float, default=1e-6)
-    parser.add_argument('--begain_ent', type=int, default=1,help='Entropy optimization and pseudo labels was used to train the model')
+    parser.add_argument('--begain_unPresuo', type=int, default=10)
+    parser.add_argument('--begain_Kmeans', type=int, default=5)
+    parser.add_argument('--LgCoefficient', type=int, default=1e4)
+    parser.add_argument('--regularization', type=str, default=None)
     # Txts
-    parser.add_argument('--txt_dir', type=str, default=''./txt'',help='The path of txt file')
-    parser.add_argument('--source_txt', type=str, default='./txt/0/source.txt',help='The txt file of source data')
-    parser.add_argument('--target_unlabeled_txt', type=str, default='./txt/0/targetUnlabel.txt',help='The txt file of unlabelled target data')
-    parser.add_argument('--target_test_txt', type=str, default='./txt/0/targetTest.txt',help='The txt file of target test data')
-    parser.add_argument('--target_labeled_txt', type=str, default='./txt/0/targetReal.txt', help='The txt file of labelled target data')
+    parser.add_argument('--source_txt', type=str, default='./txt/4/source.txt')
+    parser.add_argument('--target_unlabeled_txt', type=str, default='./txt/4/targetUnlabel.txt')
+    parser.add_argument('--target_test_txt', type=str, default='./txt/4/targetTest.txt')
+    parser.add_argument('--target_labeled_txt', type=str, default='./txt/4/targetReal.txt')
     # Directory for output
     parser.add_argument('--out_dir', type=str, default='./')
     args = parser.parse_args()

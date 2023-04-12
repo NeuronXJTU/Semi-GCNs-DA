@@ -13,12 +13,9 @@ import imgaug.augmenters as iaa
 
 class BData(data.Dataset):
     '''
-    The corresponding data set is loaded according to the value of phase.
-    When the phase value is "train", the source domain dataset is loaded.
-    When the phase value is "unlabel_data", the target domain unlabelled dataset is loaded.
-    When the phase value is "reallabel_data", the target domain labelled dataset is loaded.
-    When the phase value is "test", the target domain test dataset is loaded.
+    BData
     '''
+
 
     def __init__(self, phase, args):
         super().__init__()
@@ -104,7 +101,7 @@ class BData(data.Dataset):
             self.unlabeled_count = len(self.unimage_names)
 
     def __getitem__(self, index):
-        basedir = args.txt_dir
+        basedir = r'E:\code\ultrasonic'
         if self.phase == 'train':
             kind = 5
             labeled_image = cv2.imdecode(np.fromfile(os.path.join(basedir, self.image_names[index]), dtype=np.uint8),
